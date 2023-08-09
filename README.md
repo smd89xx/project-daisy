@@ -16,6 +16,7 @@ It's a thing. You shouldn't be seeing this thing yet.
 #### On Linux
 
 While in the root of the repository:
+
      ./build.fish
 
 #### On macOS
