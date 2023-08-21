@@ -15,6 +15,10 @@ It's a thing. You shouldn't be seeing this thing yet.
 
 #### On Linux
 
+**Make sure the `CTRMML_DIR` environment variable is set to the path of the MDSDRV MML Compiler.**
+
+On Linux, this can be done with `export CTRMML_DIR=/path/to/ctrmml`
+
 While in the root of the repository:
 
      ./build.fish
