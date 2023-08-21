@@ -1,0 +1,1 @@
+SPRITE cursor "spr/cursor.png" 1 1 BEST 0
