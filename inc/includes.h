@@ -7,5 +7,6 @@
 #include "spr.h"
 #include "mdsdat.h"
 #include "mdsdrv.h"
+#include "prefs.h"
 #include "main.h"
 #include "bsod.h"

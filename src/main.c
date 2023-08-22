@@ -17,8 +17,10 @@ const Option menuTitle[] =
 Sprite* menuCursor;
 u8* currentIndex;
 u8* musIndex;
+fix16* scroll;
+fix16* scrollSpeed;
 
-static void fadePalette(const u16* palette)
+void fadePalette(const u16* palette)
 {
     u16 finalPalette[64];
     memcpy(finalPalette,palette,48*sizeof(u16));
@@ -26,7 +28,7 @@ static void fadePalette(const u16* palette)
     PAL_fadeInAll(finalPalette,palFadeTime,TRUE);
 }
 
-static void drawMenu(const Option* option, u8 length, u8 paletteLine, u8 plane)
+void drawMenu(const Option* option, u8 length, u8 paletteLine, u8 plane)
 {
     VDP_setTextPalette(paletteLine);
     VDP_setTextPlane(plane);
@@ -40,7 +42,7 @@ static void drawMenu(const Option* option, u8 length, u8 paletteLine, u8 plane)
     menuCursor = SPR_addSprite(&cursor,TILE_TO_PIXEL(option[*currentIndex].x) - 8,TILE_TO_PIXEL(option[*currentIndex].y),basetile);
 }
 
-static void curMove(const Option* option, u8 length, bool direction)
+void curMove(const Option* option, u8 length, bool direction)
 {
     SELECTION_SFX;
     if (!direction)
@@ -88,6 +90,11 @@ static void selectOption_Title()
     }
     switch (*currentIndex)
     {
+    case 3:
+    {
+        preferences();
+        break;
+    }
     default:
     {
         killExec(menuIndexInvalid);
@@ -131,24 +138,24 @@ static void joyEvent_Title(u16 joy, u16 changed, u16 state)
     }
 }
 
-static void title()
+void title()
 {
     s16 indLogo = TILE_USER_INDEX;
     s16 indBG = indLogo + title_logo.tileset->numTile;
     u16 basetileLogo = TILE_ATTR_FULL(PAL0,FALSE,FALSE,FALSE,indLogo);
     u16 basetileBG = TILE_ATTR_FULL(PAL1,FALSE,FALSE,FALSE,indBG);
-    fix16 scroll = FIX16(0);
-    fix16 scrollSpeed;
     u8 y;
+    scroll = MEM_alloc(SIZEOF_16BIT);
+    scrollSpeed = MEM_alloc(SIZEOF_16BIT);
     if (isNTSC)
     {
         y = 27;
-        scrollSpeed = FIX16(1.0/3.0);
+        *scrollSpeed = FIX16(1.0/3.0);
     }
     else
     {
         y = 29;
-        scrollSpeed = FIX16(0.4);
+        *scrollSpeed = FIX16(0.4);
     }
     CLEAR_BG1;
     CLEAR_BG2;
@@ -163,11 +170,11 @@ static void title()
     MDS_request(MDS_BGM,BGM_MUS_CLI2);
     while (1)
     {
-        scroll -= scrollSpeed;
+        *scroll -= *scrollSpeed;
         SYS_doVBlankProcess();
         SPR_update();
         MDS_update();
-        VDP_setHorizontalScroll(BG_B,fix16ToInt(scroll));
+        VDP_setHorizontalScroll(BG_B,fix16ToInt(*scroll));
     }
 }
 
