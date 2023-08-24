@@ -21,9 +21,9 @@ extern fix16* scrollSpeed;
 extern Sprite* menuCursor;
 
 #define MUSIC_FADE          MDS_fade(127,7,TRUE)
-#define PAL_FADE_OUT        PAL_fadeOutAll(palFadeTime,TRUE);
-#define CLEAR_BG1           VDP_clearPlane(BG_A,TRUE);
-#define CLEAR_BG2           VDP_clearPlane(BG_B,TRUE);
+#define PAL_FADE_OUT        PAL_fadeOutAll(palFadeTime,TRUE)
+#define CLEAR_BG1           VDP_clearPlane(BG_A,TRUE)
+#define CLEAR_BG2           VDP_clearPlane(BG_B,TRUE)
 #define TILE_TO_PIXEL(tile) (tile << 3)
 #define SELECTION_SFX       MDS_request(MDS_SE1,BGM_SFX_S1SELECT)
 #define SIZEOF_8BIT         1

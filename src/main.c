@@ -23,8 +23,8 @@ fix16* scrollSpeed;
 void fadePalette(const u16* palette)
 {
     u16 finalPalette[64];
-    memcpy(finalPalette,palette,48*sizeof(u16));
-    memcpy(&finalPalette[48],playerPalettes[1],16*sizeof(u16));
+    memcpy(finalPalette,palette,48*SIZEOF_16BIT);
+    memcpy(&finalPalette[48],playerPalettes[1],16*SIZEOF_16BIT);
     PAL_fadeInAll(finalPalette,palFadeTime,TRUE);
 }
 
@@ -38,7 +38,7 @@ void drawMenu(const Option* option, u8 length, u8 paletteLine, u8 plane)
         VDP_drawText(o.label,o.x,o.y);
     }
     u16 basetile = TILE_ATTR(paletteLine,FALSE,FALSE,FALSE);
-    currentIndex = MEM_alloc(sizeof(u8));
+    currentIndex = MEM_alloc(SIZEOF_8BIT);
     menuCursor = SPR_addSprite(&cursor,TILE_TO_PIXEL(option[*currentIndex].x) - 8,TILE_TO_PIXEL(option[*currentIndex].y),basetile);
 }
 
@@ -73,6 +73,7 @@ void curMove(const Option* option, u8 length, bool direction)
 static void selectOption_Title()
 {
     SELECTION_SFX;
+    JOY_setEventHandler(NULL);
     u8 timer = palFadeTime;
     PAL_FADE_OUT;
     MUSIC_FADE;
@@ -92,6 +93,8 @@ static void selectOption_Title()
     {
     case 3:
     {
+        MEM_free(currentIndex);
+        currentIndex = NULL;
         preferences();
         break;
     }
@@ -163,7 +166,7 @@ void title()
     VDP_drawImageEx(BG_B,&title_bg,basetileBG,0,0,FALSE,TRUE);
     VDP_setTextPalette(PAL3);
     VDP_drawText("}TheWindowsPro98 2023",9,y);
-    VDP_drawText("Version ppa1.2",0,6);
+    VDP_drawText("Version ppa1.3",0,6);
     VDP_drawText("Press START button",11,14);
     fadePalette(titlePalette);
     JOY_setEventHandler(joyEvent_Title);

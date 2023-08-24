@@ -4,59 +4,154 @@ const u8 optX = 10;
 const u8 optY = 8;
 const u8 optNum = 9;
 const u8 optXDelta = 13;
+const u8 sfxStart = 4;
 bool player = TRUE; // 0 - Lucy, 1 - Stephanie
-u8 difficulty = 1; // 0 - Easy, 1 - Normal, 2 - Hard, 3 - Cement (name subject to change)
+u8 difficulty = 1; // 0 - Easy, 1 - Normal, 2 - Hard, 3 - Hardest  
 Sprite* confCurDiff;
 Sprite* confCurChr;
+u8 lives = 5;
 
 const Option menuPrefs[] = 
 {
-    {optX+optXDelta, optY, "Easy"},
-    {optX+optXDelta, optY+1, "Normal"},
-    {optX+optXDelta, optY+2, "Hard"},
-    {optX+optXDelta, optY+3, "Cement"},
+    {optX+optXDelta, optY, "Sissy"},
+    {optX+optXDelta, optY+1, "Average"},
+    {optX+optXDelta, optY+2, "Honors"},
+    {optX+optXDelta, optY+3, "Hell^"},
     {optX+optXDelta, optY+5, "Lucy"},
     {optX+optXDelta, optY+6, "Stephanie"},
-    {optX+optXDelta, optY+8, "00"},
+    {optX+optXDelta, optY+8, "05"},
     {optX+optXDelta, optY+9, "00"},
     {optX+(optXDelta >> 1) + 1, optY+12, "Exit"},
 };
 
-void selectOption_Prefs()
+static void selectorMove(bool type)
+{
+    u8 szStr = strlen(menuPrefs[*currentIndex].label);
+    if (!type)
+    {
+        SPR_setPosition(confCurDiff,TILE_TO_PIXEL(menuPrefs[*currentIndex].x + szStr),TILE_TO_PIXEL(menuPrefs[*currentIndex].y));
+        difficulty = *currentIndex;
+    }
+    else
+    {
+        SPR_setPosition(confCurChr,TILE_TO_PIXEL(menuPrefs[*currentIndex].x + szStr),TILE_TO_PIXEL(menuPrefs[*currentIndex].y));
+        player = *currentIndex - 4;
+    }
+}
+
+static void selectOption_Prefs()
 {
     SELECTION_SFX;
-    u8 timer = palFadeTime;
-    PAL_FADE_OUT;
-    MUSIC_FADE;
-    while(1)
+    switch (*currentIndex)
     {
+    case 6:
+    {
+        break;
+    }
+    case 7:
+    {
+        if (*musIndex < sfxStart)
+        {
+            MDS_request(MDS_BGM,*musIndex);
+        }
+        else
+        {
+            MDS_request(MDS_SE1,*musIndex);
+        }
+        break;
+    }
+    case 8:
+    {
+        JOY_setEventHandler(NULL);
+        u8 timer = palFadeTime;
+        PAL_FADE_OUT;
+        MUSIC_FADE;
+        while(1)
+        {
         timer--;
         SYS_doVBlankProcess();
         MDS_update();
         if (timer == 0)
-        {
-            SPR_releaseSprite(menuCursor);
-            SPR_update();
-            break;
+            {
+                SPR_releaseSprite(menuCursor);
+                SPR_update();
+                break;
+            }
         }
-    }
-    switch (*currentIndex)
-    {
-    case 8:
-    {
         CLEAR_BG2;
         SPR_reset();
         MEM_free(currentIndex);
+        currentIndex = NULL;
         MEM_free(musIndex);
+        musIndex = NULL;
         title();
         break;
     }
     default:
     {
+        if (*currentIndex < 4)
+        {
+            selectorMove(FALSE);
+            break;
+        }
+        else if (*currentIndex < 6)
+        {
+            selectorMove(TRUE);
+            break;
+        }
+        JOY_setEventHandler(NULL);
+        u8 timer = palFadeTime;
+        PAL_FADE_OUT;
+        MUSIC_FADE;
+        while(1)
+        {
+        timer--;
+        SYS_doVBlankProcess();
+        MDS_update();
+        if (timer == 0)
+            {
+                SPR_releaseSprite(menuCursor);
+                SPR_update();
+                break;
+            }
+        }
         killExec(menuIndexInvalid);
         break;
     }
     }
+}
+
+static void drawMenuHex(bool direction, bool type)
+{
+    SELECTION_SFX;
+    char hexStr[3] = "00";
+    if (!direction)
+    {
+        if (!type)
+        {
+            lives--;
+            intToHex(lives,hexStr,2);
+        }
+        else
+        {
+            *musIndex -= 1;
+            intToHex(*musIndex,hexStr,2);
+        }
+    }
+    else
+    {
+        if (!type)
+        {
+            lives++;
+            intToHex(lives,hexStr,2);
+        }
+        else
+        {
+            *musIndex += 1;
+            intToHex(*musIndex,hexStr,2);
+        }
+    }
+    VDP_drawText(hexStr,menuPrefs[*currentIndex].x,menuPrefs[*currentIndex].y);
 }
 
 static void joyEvent_Prefs(u16 joy, u16 changed, u16 state)
@@ -73,6 +168,28 @@ static void joyEvent_Prefs(u16 joy, u16 changed, u16 state)
     {
         curMove(menuPrefs,optNum,TRUE);
     }
+    if (changed & state & BUTTON_LEFT)
+    {
+        if (*currentIndex == 6)
+        {
+            drawMenuHex(FALSE,FALSE);
+        }
+        else if (*currentIndex == 7)
+        {
+            drawMenuHex(FALSE,TRUE);
+        }
+    }
+    else if (changed & state & BUTTON_RIGHT)
+    {
+        if (*currentIndex == 6)
+        {
+            drawMenuHex(TRUE,FALSE);
+        }
+        else if (*currentIndex == 7)
+        {
+            drawMenuHex(TRUE,TRUE);
+        }
+    }
     if (changed & state & BUTTON_B)
     {
         *currentIndex = 8;
@@ -87,6 +204,8 @@ static void joyEvent_Prefs(u16 joy, u16 changed, u16 state)
 void preferences()
 {
     u16 basetile = TILE_ATTR(PAL3,FALSE,FALSE,FALSE);
+    u8 diffStrLen = strlen(menuPrefs[difficulty].label);
+    u8 chrStrLen = strlen(menuPrefs[player + 4].label);
     CLEAR_BG1;
     VDP_drawText("Changes made will only take effect",2,0);
     VDP_drawText("upon starting a new game.",2,1);
@@ -95,8 +214,9 @@ void preferences()
     VDP_drawText("Lives:",optX,optY+8);
     VDP_drawText("Sound Test:",optX,optY+9);
     drawMenu(menuPrefs,optNum,PAL3,BG_A);
-    confCurDiff = SPR_addSprite(&heart,TILE_TO_PIXEL((menuPrefs[difficulty].x + 6)),TILE_TO_PIXEL(menuPrefs[difficulty].y),basetile);
-    confCurDiff = SPR_addSprite(&heart,TILE_TO_PIXEL((menuPrefs[player].x + 9)),TILE_TO_PIXEL(menuPrefs[player + 4].y),basetile);
+    confCurDiff = SPR_addSprite(&heart,TILE_TO_PIXEL((menuPrefs[difficulty].x + diffStrLen)),TILE_TO_PIXEL(menuPrefs[difficulty].y),basetile);
+    confCurChr = SPR_addSprite(&heart,TILE_TO_PIXEL((menuPrefs[player].x + chrStrLen)),TILE_TO_PIXEL(menuPrefs[player + 4].y),basetile);
+    musIndex = MEM_alloc(SIZEOF_8BIT);
     JOY_setEventHandler(joyEvent_Prefs);
     fadePalette(titlePalette);
     MDS_request(MDS_BGM,BGM_MUS_S2BLVS);
