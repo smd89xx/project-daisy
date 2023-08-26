@@ -144,29 +144,37 @@ static void joyEvent_Title(u16 joy, u16 changed, u16 state)
 void title()
 {
     s16 indLogo = TILE_USER_INDEX;
-    s16 indBG = indLogo + title_logo.tileset->numTile;
+    s16 indBG = indLogo + title_logo_us.tileset->numTile;
     u16 basetileLogo = TILE_ATTR_FULL(PAL0,FALSE,FALSE,FALSE,indLogo);
     u16 basetileBG = TILE_ATTR_FULL(PAL1,FALSE,FALSE,FALSE,indBG);
     u8 y;
     scroll = MEM_alloc(SIZEOF_16BIT);
     scrollSpeed = MEM_alloc(SIZEOF_16BIT);
+    CLEAR_BG1;
+    CLEAR_BG2;
     if (isNTSC)
     {
         y = 27;
         *scrollSpeed = FIX16(1.0/3.0);
+        if (*region == ntscJPN)
+        {
+            VDP_drawImageEx(BG_A,&title_logo,basetileLogo,0,0,FALSE,TRUE);
+        }
+        else
+        {
+            VDP_drawImageEx(BG_A,&title_logo_us,basetileLogo,0,0,FALSE,TRUE);
+        }
     }
     else
     {
         y = 29;
         *scrollSpeed = FIX16(0.4);
+        VDP_drawImageEx(BG_A,&title_logo_us,basetileLogo,0,0,FALSE,TRUE);
     }
-    CLEAR_BG1;
-    CLEAR_BG2;
-    VDP_drawImageEx(BG_A,&title_logo,basetileLogo,0,0,FALSE,TRUE);
     VDP_drawImageEx(BG_B,&title_bg,basetileBG,0,0,FALSE,TRUE);
     VDP_setTextPalette(PAL3);
     VDP_drawText("}TheWindowsPro98 2023",9,y);
-    VDP_drawText("Version ppa1.3",0,6);
+    VDP_drawText("Version ppa1.4-dev1",0,6);
     VDP_drawText("Press START button",11,14);
     fadePalette(titlePalette);
     JOY_setEventHandler(joyEvent_Title);
@@ -192,12 +200,20 @@ static void segaScreen()
     if (isNTSC)
     {
         y = 12;
+        if (*region == ntscJPN)
+        {
+            VDP_drawImageEx(BG_A,&sega_fg_jpn,basetileFG,0,!isNTSC,FALSE,TRUE);
+        }
+        else
+        {
+            VDP_drawImageEx(BG_A,&sega_fg,basetileFG,0,!isNTSC,FALSE,TRUE);
+        }
     }
     else
     {
         y = 13;
+        VDP_drawImageEx(BG_A,&sega_fg,basetileFG,0,!isNTSC,FALSE,TRUE);
     }
-    VDP_drawImageEx(BG_A,&sega_fg,basetileFG,0,!isNTSC,FALSE,TRUE);
     VDP_drawImageEx(BG_B,&sega_bg,basetileBG,13,y,FALSE,TRUE);
     fadePalette(segaPalette);
     while (1)

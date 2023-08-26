@@ -5,5 +5,7 @@ extern const Image sega_fg;
 extern const Image sega_bg;
 extern const Image title_logo;
 extern const Image title_bg;
+extern const Image title_logo_us;
+extern const Image sega_fg_jpn;
 
 #endif // _RES_IMAGE_H_

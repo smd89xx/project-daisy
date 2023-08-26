@@ -6,7 +6,7 @@ const u8 optNum = 9;
 const u8 optXDelta = 13;
 const u8 sfxStart = 4;
 bool player = TRUE; // 0 - Lucy, 1 - Stephanie
-u8 difficulty = 1; // 0 - Easy, 1 - Normal, 2 - Hard, 3 - Hardest  
+u8 difficulty = 1; // 0 - Easy, 1 - Normal, 2 - Hard, 3 - Hardest (Names subject to change) 
 Sprite* confCurDiff;
 Sprite* confCurChr;
 u8 lives = 5;
