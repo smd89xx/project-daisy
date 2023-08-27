@@ -10,8 +10,8 @@ const ROMHeader rom_header = {
     "SEGA MEGA DRIVE ",
 #endif
     "(C)RD23 2023.AUG",
-    "PROJECT DAISY           MEGADRIVE BUILD 20230825",
-    "PROJECT DAISY           GENESIS   BUILD 20230825",
+    "PROJECT DAISY           MEGADRIVE BUILD 20230826",
+    "PROJECT DAISY           GENESIS   BUILD 20230826",
     "GM 88688463-00",
     0x000,
     "JD              ",
@@ -28,6 +28,6 @@ const ROMHeader rom_header = {
     0x00200000,
     0x0020FFFF,
     "            ",
-    "188 days remaining; marked trade        ",
+    "341 days remaining; marked trade        ",
     "JUE             "
 };

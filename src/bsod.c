@@ -76,7 +76,7 @@ void killExec(u32 stopcode)
     }
     default:
     {
-        errPtr = NULL;
+        errPtr = &stopStrings[0][0];
         errVal = NULL;
         break;
     }

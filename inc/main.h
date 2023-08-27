@@ -29,6 +29,7 @@ extern Sprite* menuCursor;
 #define SIZEOF_8BIT         1
 #define SIZEOF_16BIT        2
 #define SIZEOF_32BIT        4
+#define TILE_USER_INDEX     1
 
 void fadePalette(const u16* palette);
 void drawMenu(const Option* option, u8 length, u8 paletteLine, u8 plane);

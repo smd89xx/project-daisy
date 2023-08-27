@@ -5,6 +5,8 @@ const u8 optY = 8;
 const u8 optNum = 9;
 const u8 optXDelta = 13;
 const u8 sfxStart = 4;
+const u8 livesInd = 6;
+const u8 sndInd = 7;
 bool player = TRUE; // 0 - Lucy, 1 - Stephanie
 u8 difficulty = 1; // 0 - Easy, 1 - Normal, 2 - Hard, 3 - Hardest (Names subject to change) 
 Sprite* confCurDiff;
@@ -121,7 +123,7 @@ static void selectOption_Prefs()
     }
 }
 
-static void drawMenuHex(bool direction, bool type)
+static void drawMenuHex(bool direction, bool type, bool accel)
 {
     SELECTION_SFX;
     char hexStr[3] = "00";
@@ -129,12 +131,26 @@ static void drawMenuHex(bool direction, bool type)
     {
         if (!type)
         {
-            lives--;
+            if (!accel)
+            {
+                lives--;
+            }
+            else
+            {
+                lives -= 0x10;
+            }
             intToHex(lives,hexStr,2);
         }
         else
         {
-            *musIndex -= 1;
+            if (!accel)
+            {
+                *musIndex -= 1;
+            }
+            else
+            {
+                *musIndex -= 0x10;
+            }
             intToHex(*musIndex,hexStr,2);
         }
     }
@@ -142,12 +158,26 @@ static void drawMenuHex(bool direction, bool type)
     {
         if (!type)
         {
-            lives++;
+            if (!accel)
+            {
+                lives++;
+            }
+            else
+            {
+                lives += 0x10;
+            }
             intToHex(lives,hexStr,2);
         }
         else
         {
-            *musIndex += 1;
+            if (!accel)
+            {
+                *musIndex += 1;
+            }
+            else
+            {
+                *musIndex += 0x10;
+            }
             intToHex(*musIndex,hexStr,2);
         }
     }
@@ -170,30 +200,52 @@ static void joyEvent_Prefs(u16 joy, u16 changed, u16 state)
     }
     if (changed & state & BUTTON_LEFT)
     {
-        if (*currentIndex == 6)
+        if (*currentIndex == livesInd)
         {
-            drawMenuHex(FALSE,FALSE);
+            drawMenuHex(FALSE,FALSE,FALSE);
         }
-        else if (*currentIndex == 7)
+        else if (*currentIndex == sndInd)
         {
-            drawMenuHex(FALSE,TRUE);
+            drawMenuHex(FALSE,TRUE,FALSE);
         }
     }
     else if (changed & state & BUTTON_RIGHT)
     {
-        if (*currentIndex == 6)
+        if (*currentIndex == livesInd)
         {
-            drawMenuHex(TRUE,FALSE);
+            drawMenuHex(TRUE,FALSE,FALSE);
         }
-        else if (*currentIndex == 7)
+        else if (*currentIndex == sndInd)
         {
-            drawMenuHex(TRUE,TRUE);
+            drawMenuHex(TRUE,TRUE,FALSE);
         }
     }
     if (changed & state & BUTTON_B)
     {
         *currentIndex = 8;
         selectOption_Prefs();
+    }
+    else if (changed & state & BUTTON_A)
+    {
+        if (*currentIndex == livesInd)
+        {
+            drawMenuHex(FALSE,FALSE,TRUE);
+        }
+        else if (*currentIndex == sndInd)
+        {
+            drawMenuHex(FALSE,TRUE,TRUE);
+        }
+    }
+    else if (changed & state & BUTTON_C)
+    {
+        if (*currentIndex == livesInd)
+        {
+            drawMenuHex(TRUE,FALSE,TRUE);
+        }
+        else if (*currentIndex == sndInd)
+        {
+            drawMenuHex(TRUE,TRUE,TRUE);
+        }
     }
     if (changed & state & BUTTON_START)
     {

@@ -1,0 +1,11 @@
+{ 
+    "C_Cpp.default.includePath": ["${env:HOME}/mars/sgdk/SGDK/inc",
+    "${env:HOME}/mars/sgdk/SGDK/res",
+    "res",
+    "inc"
+],
+"files.associations": {
+    "includes.h": "c",
+    "palettes.h": "c"
+}
+}

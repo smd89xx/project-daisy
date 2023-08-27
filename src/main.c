@@ -23,7 +23,7 @@ fix16* scrollSpeed;
 void fadePalette(const u16* palette)
 {
     u16 finalPalette[64];
-    memcpy(finalPalette,palette,48*SIZEOF_16BIT);
+    memcpy(&finalPalette[0],palette,48*SIZEOF_16BIT);
     memcpy(&finalPalette[48],playerPalettes[1],16*SIZEOF_16BIT);
     PAL_fadeInAll(finalPalette,palFadeTime,TRUE);
 }
@@ -134,10 +134,17 @@ static void joyEvent_Title(u16 joy, u16 changed, u16 state)
     }
     if (changed & state & BUTTON_START)
     {
-        VDP_clearTextLine(14);
-        MDS_request(MDS_SE1,BGM_SFX_S1SELECT);
-        drawMenu(menuTitle,4,PAL3,BG_A);
-        JOY_setEventHandler(joyEvent_TitleMenu);
+        if (state & BUTTON_A)
+        {
+            killExec(genericErr);
+        }
+        else
+        {
+            VDP_clearTextLine(14);
+            MDS_request(MDS_SE1,BGM_SFX_S1SELECT);
+            drawMenu(menuTitle,4,PAL3,BG_A);
+            JOY_setEventHandler(joyEvent_TitleMenu);
+        }
     }
 }
 
@@ -174,7 +181,7 @@ void title()
     VDP_drawImageEx(BG_B,&title_bg,basetileBG,0,0,FALSE,TRUE);
     VDP_setTextPalette(PAL3);
     VDP_drawText("}TheWindowsPro98 2023",9,y);
-    VDP_drawText("Version ppa1.4-dev1",0,6);
+    VDP_drawText("Version ppa1.4-dev2",0,6);
     VDP_drawText("Press START button",11,14);
     fadePalette(titlePalette);
     JOY_setEventHandler(joyEvent_Title);
@@ -194,7 +201,7 @@ static void segaScreen()
     s16 indFG = TILE_USER_INDEX;
     s16 indBG = indFG + sega_fg.tileset->numTile;
     u16 basetileFG = TILE_ATTR_FULL(PAL0,FALSE,FALSE,FALSE,indFG);
-    u16 basetileBG = TILE_ATTR_FULL(PAL1,FALSE,FALSE,FALSE,indBG);
+    u16 basetileBG = TILE_ATTR_FULL(PAL0,FALSE,FALSE,FALSE,indBG);
     u8 timer = (1.65 * vblankRate) + (palFadeTime << 1);
     u8 y;
     if (isNTSC)
