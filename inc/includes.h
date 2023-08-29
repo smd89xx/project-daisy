@@ -10,3 +10,5 @@
 #include "prefs.h"
 #include "main.h"
 #include "bsod.h"
+#include "collision.h"
+#include "game.h"

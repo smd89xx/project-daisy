@@ -2,7 +2,7 @@
 
 #include "includes.h"
 
-enum stopCodes {genericErr,featureNotFound,regionInvalid,menuIndexInvalid};
+enum stopCodes {genericErr,featureNotFound,regionInvalid,menuIndexInvalid,lvlInvalid,plrInvalid};
 
 
 /// @brief Shows a BSOD.

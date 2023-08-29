@@ -11,6 +11,8 @@ typedef struct
     char* label;
 }Option;
 
+typedef char* string;
+
 extern u8 palFadeTime;
 extern u8 vblankRate;
 extern const u8* region;

@@ -1,13 +1,17 @@
 #include "includes.h"
 
-const char stopStrings[][41] = {"ERROR_USER_GENERIC","ERROR_FUNCTION_UNIMPLEMENTED","ERROR_REGION_INVALID","ERROR_MENU_INDEX_INVALID"};
+const string stopStrings[] = {"ERROR_USER_GENERIC","ERROR_FUNCTION_UNIMPLEMENTED","ERROR_REGION_INVALID","ERROR_MENU_INDEX_INVALID","ERROR_LEVEL_INVALID","ERROR_PLAYER_INVALID"};
 u32* stopcode_public;
 
 static void joyEvent_BSOD(u16 joy, u16 changed, u16 state)
 {
+    if (joy != JOY_1)
+    {
+        return;
+    }
     if (changed & state & BUTTON_START)
     {
-        char unfixableErrorStr[41] = "Error is unfixable!";
+        string unfixableErrorStr = "Error is unfixable!";
         VDP_drawText("Fixing errors...",0,22);
         MDS_request(MDS_BGM,BGM_SFX_S1SELECT);
         switch (*stopcode_public)
@@ -40,7 +44,7 @@ void killExec(u32 stopcode)
     SPR_end();
     PAL_interruptFade();
     VDP_setTextPalette(PAL0);
-    char bsodStrings[14][41] = {"A problem has been detected and the","current process has ended to prevent","damage to your console.","If this is the first time you've seen","this screen, reset your console. If you","see this screen again, press the","START button. This will make an attempt","to fix any problems you are having.","If problems continue, contact the","developer for a potential fix, if any","can be provided, or erase all save data","and start over. A backup is recommended.","Technical Information:","***** STOP: 0x"};
+    string bsodStrings[14] = {"A problem has been detected and the","current process has ended to prevent","damage to your console.","If this is the first time you've seen","this screen, reset your console. If you","see this screen again, press the","START button. This will make an attempt","to fix any problems you are having.","If problems continue, contact the","developer for a potential fix, if any","can be provided, or erase all save data","and start over. A backup is recommended.","Technical Information:","***** STOP: 0x"};
     u32 errPtr;
     u32 errVal;
     for (i = 0; i < 3; i++)
@@ -64,24 +68,36 @@ void killExec(u32 stopcode)
     {
     case 2:
     {
-        errPtr = region;
-        errVal = *region;
+        errPtr = (u32)region;
+        errVal = (u32)*region;
         break;
     }
     case 3:
     {
-        errPtr = currentIndex;
-        errVal = *currentIndex;
+        errPtr = (u32)currentIndex;
+        errVal = (u32)*currentIndex;
+        break;
+    }
+    case 4:
+    {
+        errPtr = (u32)&level;
+        errVal = (u32)level;
+        break;
+    }
+    case 5:
+    {
+        errPtr = (u32)&player;
+        errVal = (u32)player;
         break;
     }
     default:
     {
-        errPtr = &stopStrings[0][0];
+        errPtr = NULL;
         errVal = NULL;
         break;
     }
     }
-    char scStr[9] = "00000000";
+    char scStr[9] = "DEADDEAD";
     intToHex(stopcode,scStr,8);
     VDP_drawText(scStr,14,18);
     intToHex(errPtr,scStr,8);
@@ -92,12 +108,11 @@ void killExec(u32 stopcode)
     VDP_drawText("** CONTENT: 0x",0,20);
     PAL_setPalette(PAL0,bsodPalette,DMA);
     MUSIC_FADE;
-    stopcode_public = MEM_alloc(sizeof(u32));
-    memcpy(stopcode_public,&stopcode,sizeof(u32));
+    stopcode_public = MEM_alloc(SIZEOF_32BIT);
+    memcpy(stopcode_public,&stopcode,SIZEOF_32BIT);
     JOY_setEventHandler(joyEvent_BSOD);
     while (1)
     {
-        MDS_update();
         SYS_doVBlankProcess();
     }
 }

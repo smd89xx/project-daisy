@@ -3,7 +3,7 @@
 u8 palFadeTime;
 u8 vblankRate;
 bool isNTSC;
-const u8* region = (u8 *)0x00A10001;
+const u8* region = (u8*)0x00A10001;
 const u8 titleX = 7;
 const u8 titleY = 23;
 const u8 numOptsTitle = 4;
@@ -91,6 +91,21 @@ static void selectOption_Title()
     }
     switch (*currentIndex)
     {
+    case 0:
+    {
+        MEM_free(currentIndex);
+        currentIndex = NULL;
+        MEM_free(musIndex);
+        musIndex = NULL;
+        MEM_free(scroll);
+        scroll = NULL;
+        MEM_free(scrollSpeed);
+        scrollSpeed = NULL;
+        MEM_pack();
+        level = 0;
+        gameInit();
+        break;
+    }
     case 3:
     {
         MEM_free(currentIndex);
@@ -173,7 +188,7 @@ void title()
     VDP_drawImageEx(BG_B,&title_bg,basetileBG,0,0,FALSE,TRUE);
     VDP_setTextPalette(PAL3);
     VDP_drawText("}TheWindowsPro98 2023",9,y);
-    VDP_drawText("Version ppa1.4-dev2.1",0,6);
+    VDP_drawText("Version pa1.0-dev1",0,6);
     VDP_drawText("Press START button",11,14);
     fadePalette(titlePalette);
     JOY_setEventHandler(joyEvent_Title);
