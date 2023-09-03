@@ -3,6 +3,10 @@ Project Daisy
 
 It's a SEGA Genesis game thing.
 
+# Important Notice
+
+This repository is under temporary stasis. I will come back with the milk. Eventually.
+
 ## How 2 build thing
 
 ### Dependencies
