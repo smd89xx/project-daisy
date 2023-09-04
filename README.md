@@ -7,6 +7,8 @@ It's a SEGA Genesis game thing.
 
 This repository is under temporary stasis. I will come back with the milk. Eventually.
 
+In the meantime, check out the [PC Version](https://github.com/TheWindowsPro98/project-daisy-pc)
+
 ## How 2 build thing
 
 ### Dependencies
